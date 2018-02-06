@@ -1,0 +1,56 @@
+{
+  "name": "WigglerSim",
+  "version": "1.0.0",
+  "description": "Raise Wigglers, change the Empire",
+  "main": "main.js",
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": "git@github.com:jadedResearcher/WigglerSimStandAlone.git",
+  "keywords": [
+    "Wiggler",
+    "Sim",
+    "SBURBSim",
+    "Grub",
+    "Empire"
+  ],
+  "author": "JR",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.7.8",
+    "electron-builder": "^19.56.0"
+  },
+  "build": {
+    "appId": "jr.wiggler",
+    "mac": {
+      "category": "jr.wiggler.simulation.game"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "icon": "build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "electron-builder-squirrel-windows": "^20.0.0"
+  }
+}

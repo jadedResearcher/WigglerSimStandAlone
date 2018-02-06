@@ -1,0 +1,1115 @@
+Alright.
+
+I know what I want to do.
+
+And there are a LOT of ways to do it.
+
+Which one is right for my needs?
+
+Time/Space  Impatient/Patient
+Doom/Life Calm/Energetic
+Rage/Hope Realism/Idealism
+Void/Light Accepting/Curious
+Breath/Blood Free/Committed
+Heart/Mind Introversion/Extroversion
+
+~~~~~~~~~~~
+
+Summary of Problem: (Five minutes on the Clock).
+
+I want to take 6 stats, each of which could be positive or negative, and convert
+that into a Begining, Middle, and End for the trolls.
+
+If at all possible, I want to avoid randomness.
+
+If at all possible, I want there to be a satisfying connection between Epilogue and stats.
+
+SubProblems: I think it will be more complex than flags, because 12 possible stats.
+
+((future jr, look into land theme stuff possibly for this, but no solution now).
+
+What other parts of this problem exist?
+
+I need to keep the text BRIEF, no risk of it going off screen.
+
+Do I want lusii selection to be based on stats? Lusii actions?
+
+Case of death. Yes. If they die younger than lifespan, it was a violent or sickly one.
+
+I think each part of the problem needs to turn into sub problems, Begining, Middle, End.
+
+I don't want to drill down too much into details right if I'm on the clock.
+
+Think.
+
+I anticipate that it will still LOOK somewhat random, unless I focus hard on making things work.
+
+What about stat interactions? (the land idea from earlier???)?   An impatient, energetic wiggler vs a patient energetic wiggler?
+
+I don't want this to be TOO involved, but I do want there to be a satisfying correlation.
+
+There's that word again: satisfying. I want stats to mean something because the epilogue is the
+last permanent thing you get for the wiggler. It has to be THEM, frozen in time.
+
+Also: will raw stats matter or only pos vs neg? Thresholds?
+
+Alright. Only 20 seconds left. That's good enough for time.
+
+~~~~~~~~~~~
+
+So, before I started summarizing the problem, I was tempted to try to roll a solution right now, with only
+my single test stat added. I realize now that it will make me too dependant on independant stat values, which I don't want.
+
+So:
+
+Action Items:
+
+*  Add 5 more stats.
+* Stats have thresholds for low, medium, high, and VERY HIGH values. Don't print raw numbers any more.
+    * Grubs are born with low/medium stats. High and VERY HIGH will be from raising.
+*  Make a Begining Use case for how lusii and lusii actions will matter (maybe only actions?).
+
+Possible thought: Pick two things for middle and begining based on highest and second highest abs value stats?
+
+But then it would be too consistent.
+
+Weight each stat based on comparison to VERY_HIGH, pick from array?
+have begining, middle and end stored in stat itself. Remove stat from array if you pick it for a section, so you can't
+spam it?
+
+Would make creating the stat a bit more ponderous, but I don't mind. It's like the land thing wihtout
+being as involved as the half-thought I had during problem definition.
+
+Yes. This is my plan.  Stat has the thing that goes in the template when it says lusii did x and y and troll did x and y.
+template itself is random.
+b,m,e arrays, and copies for jade, fuscia, and purple
+
+((Also, I'm realizing that by doing it this way (game play coded last, endings coded first),
+I'm sort of giving people goals to work towards. First they see the endings, then they get
+the tools to raise their wiggler towards desired endings and find new ones.
+
+
+~~~~~~~~
+
+Okay, I have some infrastructure in place.
+
+I might not be able to think straight enough (shit is stressful irl) to do anything with teh infrastucture.
+
+What needs to happen?
+
+When I create a Stat, i should pass a positive and negative flavor.
+
+That's first . I don't have to think more than that many steps ahead.
+
+~~~~~~
+
+Alright that's done.
+
+What's the next step?
+
+For each stat in the stats array, ask it to add whatever flavor is appropriate at the right weight to
+a weighted array.
+
+Then, add the default values at a low weight. .1 or whatever.
+
+So. What is the right weight?
+
+I want some things to essentially be zero weight, right?
+
+Maybe not.
+
+So, Use Case:
+
+I have HIGH PATIENCE.
+
+I ask the stat to add itself to my existing array of flavor text.
+
+It says "my value is positive", so it uses positiveFlavor and not negativeFlavor
+
+Then, it says "am I higher or equal to low?", the answer is "yes", so it adds all "low" values.
+Then it says the same for medium, which is YES, high, which is YES and VERY HIGH which is "no".
+
+So the only one it doesn't add is VERY HIGH. Weights it adds it at is based on which tier it is.
+
+Now, since the DEFAULT flavor thing isn't attached to a stat, the stat itself can't have the logic.
+
+The stat will pass a number to it and the "am I higher or equal to X" logic happens on the passed number.
+
+If it's default, the number you pass in is the average abs value of all stats.
+
+~~~
+
+Alright, I think I have the infrastructure.
+
+Now what needs to call it?
+
+I guess I'll approach it from the opposite angle? I need to unhook old middle text and use this one instead.
+
+Different templates.
+
+~~~~~
+
+Alright. It's not time for bed yet. So what's left?  Non-Natural causes of death of course.
+
+What I need to do is have some stats marked as "increase chance of violent death". And some be neutral, and some case it.
+
+Then add up stats and use that as a random roll for if they die early or not.
+
+THEN pick a random number between 1 and their expected lifespand and that's their new lifespan.
+
+THEN ask a stat what hte cause of death is. (random list???)
+
+~~~~
+
+Morning: Any stat? No only stats that increase chance of violent death..
+
+What stats would that be?
+
+
+    static StatFlavor defaultFlavor;
+    static StatFlavor patienceFlavor;
+    static StatFlavor energeticFlavor;
+    static StatFlavor idealisticFlavor;
+    static StatFlavor curiousFlavor;
+    static StatFlavor loyalFlavor;
+    static StatFlavor externalFlavor;
+    static StatFlavor impatienceFlavor;
+    static StatFlavor calmFlavor;
+    static StatFlavor realisticFlavor;
+    static StatFlavor acceptingFlavor;
+    static StatFlavor freeFlavor;
+    static StatFlavor internalFlavor;
+
+
+    Things that reduce risk of early death:
+
+    patient, calm, accepting  ((less because alternia was dangerous))
+
+    things that increase rick of early death:
+
+    , curious, impatient, idealistic,loyal,curious
+
+    internal/external , energetic,realistic don't effect it either way?
+
+    So what kind of endings do   curious, impatient, idealistic,loyal, free ,
+
+    cause?
+
+    "asking the wrong questions","trying to rise in the ranks too quickly", "fighting for their ideals","defending the Empire from rebels", "rebelling against the empire"
+
+
+also special death text for Fuchsias (no others). Fuchsias are special cases in general, likely to die very early
+violently.
+
+~~~
+
+alright, what do I need to do next?
+
+I guess go at it from the other end, what is currently happening on death?
+
+int lifeSpan =  rand.nextInt(max - min) + min;
+        int numberOfSweeps = lifeSpan;
+
+
+So, once I get the lifeSpan i should calculate if i die early
+(dif alg for heiresses). If I do, pick a stat randomly from my list of
+stats, weighted by comparison of that stat to high (and default is in there, too)
+
+~~~
+Now, how to do fuchsia?
+
+Normally it will be "generate a number between 0 and 2x lifepsan, if it's lifepsan or longer, assume natural death"
+
+but the heiresses have this HUGE chance of dying early, then less likely later on.
+
+So. What?
+
+assume max lifespan is "100*2". If it's 100 or bigger, they win their challenge?
+
+
+
+~~~~~
+
+Okay, time for the last thing I need to hook up, otherwise known as the biggest thing.
+
+//based on stats
+String getCauseOfDeath() {
+    return "FIGURE THIS OUT ASSHOLE";
+}
+
+
+Alright so, loop on stats, for each stat, add the stat's flavor (it auto gets positive vs negative).
+
+To add the flavor, loop on the stat's flavors death flavor, the weight you add it at is your stats percent thingy.
+
+then, add default at .01 or whatever.
+
+OR would it be better to try to add the weight at the stat flavor's weight?
+
+how did I do regular middle text flavor anyways? i already fogotet
+
+~~~~~~
+
+oh shit, oh fuck, i forgot to weight shith by liklihood of violent death, like an asshole, it's just random
+
+Also everything is a natural death righ tnow.
+
+
+Alright.
+
+So I have a method violentDeathString that takes in how long they lived and uses their stats to get "cause of death";
+
+but i forgot to have the method that needs to call that.
+
+It's just
+String regularEnding(int maxLife) {
+        //TODO
+        throw("todo");
+    }
+
+For heiresses i just generated a random number between 5 and maxlifespan * 2 and that's
+all well and good, they are special.
+
+BUT, for regular trolls....what to do?
+
+I know i have some infrastructure set up:
+
+each statflavor takes in a poistive, negative or neutral number.
+
+Do I still want it to work that way?
+
+So let's get a usecase out:
+
+Impatient: Low, so 1.0
+Energetic: Medium
+Idealistic: Medium, so 1.0
+Accepting: Low so -3.0
+Free-Spirited: Low, so 1.0
+Internal: Low
+
+
+I should probably multiply by weight in StatFlavor, so:
+
+LOWWEIGHT = 0.5, MediumWeight = 1.0
+
+1.0* 0.5 + 1.0 * 1.0 + -3.0*0.5 + 1.0 * 0.5
+
+Total odds of a violent death = 0.5 + 1.0 - 1.5 + 0.5 = 0.5
+
+So what do I do with this number?
+
+generate random number between -1 and violent death chance (if negative death chance skip).
+
+if number is positive, violent death?
+
+OR, could separate it out a bit, cuz -1 was arbitrary.
+
+instead of:
+1.0* 0.5 + 1.0 * 1.0 + -3.0*0.5 + 1.0 * 0.5
+
+arguments for = : 1.0* 0.5 + 1.0 * 1.0  + 1.0 * 0.5
+arguments against = : -3.0*0.5
+
+generate a number between -1.5 and 2.5.   If it's positive, violent death.
+
+Yes, I like this.
+
+~~~~~~~
+Okay. Next thing that happens is me assigning signs.
+
+Several things will need to happen.
+
+ONE, I need to figure out what their highest normalizedStat is. (pick it at random between ties).
+
+Then (for now) pick a lunar sway at random. LATER it will be based on the care you give them, maybe.
+
+THEN I need to know how to associate all 288 signs.
+
+Might wanna flat out make it an object system.
+
+Like, have a caste object, and each caste has a owned lunar sway object and THAT has only 12 signs.
+
+So, first I say "I am a bronze blood" and pass a random fucking lunar sway.
+
+The bronze object goes to the chosen lunar sway and then asks the passed in troll
+what it's highest stat is.   From there, it returns the img_num needed to render the right sign.
+
+OR.....
+
+Could approach this based on the object I already have.
+
+Go through the stat directly.
+
+Ask the troll "what's your highest stat, if more than one, pick one at random"
+then, go to the stat itself and pass in lunar sway (random) and blood color word
+and it knows how to turn that into a number.
+
+that requires no new objects, but IS a bit less intuitive for distributing img numbers
+
+With the other system I can just be store min and max numbers for castes,
+with the stat based system it would be more:
+
+huh. what WOULD it be?
+
+on the extended zodiac grid it's diagonal.....
+
+Actually...this is a good point.
+
+
+I don't need to store just signs associated with a caste, i need to know
+which is time+derse vs time + prospit.
+
+
+Okay.   288 signs as specific objects?
+
+Static variables that let me filter by caste, lunarsway and aspect.
+
+THERE we go.
+
+It will be a fucking chore setting them up. But. I can do it.
+
+
+~~~~~~
+
+Okay, I have 100% of burgundy set up. Before I get any further, it's time to experiment:
+
+can i filter all signs by caste, aspect, moon?
+
+And once I do, can i assign it to the troll and have it be rendered?
+
+Just hard code the troll to be burgundy even if they aren't.
+
+THEN, once I know it's hooked up, can procede to fill in other castes.
+
+nvm, found  a helper. thanks 'I am cat.As yet, I am firerachet' -
+
+
+
+~~~~~~~
+
+Alright here we fucking go: time to brainstorm the actual AI.
+
+    Stat patience;
+    Stat energetic;
+    Stat idealistic;
+    Stat curious;
+    Stat loyal;
+    Stat external;
+
+So, I want to come up with actions the wigglers can do,
+and how the decision to take an action is mediated by their stats.
+
+What do I have to work with?
+
+I want there to be AI Pets and AIObjects? So that no matter what I'm interacting with
+I can have the same code.
+
+So Use Case.
+
+A grub interacts with an AIObject.  The grub changes it's own state, and the
+AIObject changes it's state (possibly not at all if it's inanimate).
+
+Without trying to get too far into the code, let's try to imagine general things that the stats could be
+related to.
+
+
+Stat external;
+    If it's high, they investigate their surroundings, if low, they space out.
+Stat curious;
+    This feels kind of similar to external/internal? Maybe it's how far they are willing to go to find new things?
+    How likely they are to just walk around for no reason?
+Stat energetic;
+    How fast they move?
+Stat patience;
+    How long they interact with the same thing? (but how diff is this gonna be from loyal)
+
+I'm noticing that plenty of stats seem similar when it comes to actions (but maybe not reactions).
+
+So maybe...
+
+Loyal/Patient = how long you interact with the same object
+External/Curious = how far you're willing to walk to get to an object
+Energetic/Idealistic = how fast you move (wide eyed wonder makes you fast?)
+
+
+So what about reactions? Or maybe it'd be more accurate to call them interaction styles?
+No, because loyal/patient involve inveractions hrrrm....
+
+Could come up with something else for them?
+
+
+But let's think about reaction.
+
+Use Case:
+
+Player tosses a Smuppet into the playpen.
+
+Curious grub goes up to investigate it. Once it's there....what happens and why?
+
+Well, obviously objects should have stats.
+
+But what does that mean?
+
+Hrrrrm.
+
+I want to say "loyal" grubs like items that match their stats the best, but that's putting the cart ahead of the four wheel device.
+
+Alright.
+
+Boil this shit down to it's base component. Grubs face expresions aren't going to change because
+barring some weird jarring swaps, there's too much variability.
+
+So.
+
+A grub investigates a smuppet. A HEART appears over their head.
+An OLDER GRUB with gold eyes investigates the smuppet. They say "Wike this!" over their head. Or "Good!".
+
+So this means I'll need an "EMOTION" object which has an icon, and a list of random associated phases.
+All grubs have baby talk quirks, but not necessarily the same one?
+
+An emotion should take in a grub and decide whether to use ICON or WORDS.
+
+So what emotions are there?
+
+heart
+spade
+club
+diamond
+
+happy
+surprised
+calm
+sad
+angry
+scared
+
+
+What will trigger each emotion?
+
+Well. What exists?
+
+Should I give the grubs memory? (may as well, i have as much save data as I need).
+
+So:
+
+I have:
+
+Grub
+    stats
+    list of items seen before (includes grubs)
+
+Other Object (which could be a grub)
+    stats
+
+
+So, I need to have a  method that decides if I am positive or negative about an object,
+and another method to decide what positive or negative means for that grub in particular
+(will it be scared, angry, etc).
+
+judgeObject takes in an object, and is a method on AIPet.
+    First it judges how similar the object is to me.
+    Then it decides whether similarity is a good or bad thing.
+
+    THEN it checks the grubs memory to see if it's seen that object before
+        (item name or stat match, both work, so it means you like familiar things even if you
+        haven't seen that exact thing before)
+
+    Then it decides whether familiarity is a good or bad thing.
+
+
+
+
+Alright now, let's talk about emotions.
+
+heart
+spade
+club
+diamond
+happy
+surprised
+calm
+sad
+angry
+scared
+
+I need to figure out what the bare minimum emotions I need are and how they relate to stats.
+Obvs quadrant symbols are only going to be for other grubs.
+
+But let's see if the existing stats have a particular lens for their emotions.
+
+Time/Space  Impatient/Patient
+Doom/Life Calm/Energetic
+Rage/Hope Realism/Idealism
+Void/Light Accepting/Curious
+Breath/Blood Free-Spirited/Loyal
+Heart/Mind Internal/External
+
+Patient/Calm/Realistic: + CALM
+Energetic/Idealistc/Impatient: +EXCITED
+Curious/Free/Internal: - SCARED
+Idealistic/Energetic/Impatient: - ANGRY
+Curious/Free/Internal: + SURPRISED
+CALM/Patient/Accepting -SAD
+Curious/External/Free-Spirited - BORED
+
+Happy and Bored can be defaults if you aren't leaning in a particular direction?
+
+Okay well, I already have the quadrant symbols, so let's test with those first.
+
+
+~~~~~~
+Alright, between a lot of bullshit I had to abandon the playpen for several days in a row.
+
+Now I need to come back to and figure out where I left off.
+
+....Bluh I hate getting interupted. It's like I have to manually kick start the obsession back up.
+
+Looks like I was just testing being able to render an emote at all.
+
+I know I have some quadrant symbols set up, where are they?
+
+The important thing is getting all the foundation layers set up. Once I do that I can REALLY make progress
+as I come up with ways to remix it and shit.
+
+Alright, looks like AIPet already has some emoticons set up.
+
+Do they know how to render themselves?  Should be relative to their grub.
+
+I need to setEmotion before I do anything else though... should do that in controller.
+
+In my head, I want the emotion popups to bob a bit before being dismissed. I'm not sure how willing I
+am to do this right vs fast though.
+
+~~~~~~
+Implementing items.
+
+Test Case:
+
+In controller, create a test item with three names, and three sprites, stats.
+
+Add to playpen.
+
+This causes it to be rendered somewhere randomly (but on the ground).
+
+All wigglers react (no matter where they are).
+
+Then, work on wiggler walk animations.
+Wigglers notice, investigate if they choose to.
+
+
+
+~~~~~~~~~~~~~
+
+Alright.
+
+I need to concentrate.
+
+I have no other thing I can do right now except ....
+
+Wait even without internet I can use my phone to check typo fixes and bug reports. Okay
+
+I'll do that first. Get my chill.
+
+~~~~~~~~
+
+Okay. that was less typos and bug reports than I hoped.
+
+I know it's hard to think right now.
+
+But I need to code so I can get my chill back.
+
+So.
+
+~~~~~~~~~~
+
+
+GOAL:   Wigglers need to be able to choose when they walk around vs sit and do nothing.
+
+Triggers for walking:
+
+I'm gonna try to ramble rather than bullet points, I don't have a solid idea on this one.
+
+
+Basically, I want only ITEMS to give their stats to a wiggler, but for a wiggler to be able to
+investigate other wigglers or ITEMS.
+
+If they investigate another wiggler, they respond with a QUADRANT SYMBOL.
+
+If they investigate an ITEM they are GIVEN THE ITEM which is already coded and has them react and also get stats.
+
+So, step one is to code a GIVE WIGGLER function. It should assign a quadrant symbol based on likesSimilar and
+likesFamiliar. Right? except I don't want wigglers to have IDs. So no familiarity with other wigglers.
+
+It should also call the GIVE WIGGLER function on the target with a "don't recurse" type of flag.
+
+I need to test this on the test page.  Give all wigglers first wiggler and see how they react.
+
+Then, i can call it on the animated page.
+At that point I'll need to have a "emotions only last x frames" fucntion.
+
+~~~~
+
+Alright, coded wigglers reacting to each other, now to test via button.
+
+~~~~
+
+Alright tested.
+
+What now?
+
+I want to write a method that has a grub ask the playpen if any grubs are near the grub.
+
+Or....no, not quite that.
+
+Grub asks playpen "what other objects are there?" then the grub asks each object where it is and decides
+if it's close enough to try to walk to.
+
+(curious grubs will basically have the entire field as "true" for investigation))
+
+once a list of valid targets (eeeeeyyyy is this a refrance? ) are compiled, the grub
+will pick one at random and head to it.
+
+Once you have a target you ignore everything else till you reach it.
+
+
+
+Independant of target picking, grubs need to be able to say "I am X close to an object, i should react to it", even
+if it's not their target.
+
+THAT means I need an AI loop independant of frame rate?
+
+for now have it just be frame rate and decide later if that matters.
+
+
+v1 of emotions will have "if you are not near an object, do not have an emotion"
+and "have the emotion so long as you are near it".
+
+FORSEEN PROBLEM: if a grub gets stat boosts every time it is in a frame next to an object
+shit will get OP fast.
+
+How can I fix this?
+
+Could have objects vanish when used? But then unfair because you might want grub X
+to get the boost but they aren't curious/energetic enough?  ((valid point, since items are currently
+deployed randomly, should uncurious grubs have a random chance of checking something out anyways if nothing is in their queue?))
+
+I got distracted. Okay, well, easy fix is all grubs in playpen are given the item's stats on deploys, but don't
+react until they get close to it.
+
+
+Alright, that's been a lot of rambling, but what are my action items?
+
+*  on give item give stats, but don't react (make new method for give stats).
+*  in same as draw loop, playpen passes each pet a list of the other pets and items in the playpen in AITICK.
+*  each pet uses curiosity to get a list of things it wants to investigate
+*  picks one thing to investigate, sets it as "target". display "?" or "!" emotion.
+*  if already has target, don't pick new target in next AITICK
+*  whether target or not, if item or grub falls within RADIUS of grub, react.
+*  walk towards target with "walk" animation and x position changing based on ENERGETIC QUOTIENT
+
+so, first, make a method for giving list of objects.
+
+next, make a method for picking a new target (if no current target exists).
+
+once target is picked, test changing animation and moving towards target (flip correctly, too)
+
+
+~~~~~~~~
+
+Well that's one way to lose your train of thought. IRL Shit intensifies in a bad way.
+
+But doing this helps me focus, so let's go.
+
+I've tested that picking a target is now a thing that can happen.
+
+I need to now translate a target into a direction I should be walking.
+
+~~~~~~~~~~~
+
+Alright. The AI is ALMOST done.
+
+I need to figure out the last little bit.
+
+They do not always face the correct direction, and sometimes they walk off in a direction no other grub is.
+
+Let's simplify the problem. get rid of two grubs.
+
+AHAH: I think I see it. it's not enough that they turn turnways if they need to go left, they also need
+to UN turn turnways if they need to go right. derp.
+
+~~~~~
+Alright, that just means I have the "wiggler suddenly sprints off screen" problem.
+
+I'm assuming it's either a target problem ( are they targeting themselves somehow?) or a direction
+problem (are they going the wrong way to get to their target?)
+
+I've got some logs where Novice Nitche sprints off screen.
+
+target for Novice Nietzsche is Master Pooplord
+VM88:1 drawing playpen
+
+Master Pooplord is in the left half of the screen, near the purple grub.
+it prints out 'Novice Nietzsche needs to go left.'
+
+Novice runs to the right.
+
+WHY.
+
+~~~~~~~
+
+Alright. The boredom update is nearly ready.
+
+EXCEPT the surprise noodles are never showing. Why? Is it because there's too many grubs?
+
+Alright.
+Riddle me this batman: when it's just two, even if they are on opposite sides of the screen,
+they say their quadrant shit before moving due to boredom, instead of saying ?.
+
+WHY.
+
+Pupate second grub, what happens if only one grub?
+
+they say "null".
+
+then, when they get there, they say their bored phrase (which is because it's imaginary).
+
+Then they sit there with no text for a bit.
+
+Then, when they leave, they say their bored phrase AGAIN.
+
+Why?
+
+This is so insane. Emotions shouldn't cache?
+
+Is it the emotion caching...or the canvas?
+
+......................
+
+oh my fucking god.
+
+I'm caching the emotion's text.
+
+and i'm doing currentEmotion = surpriseNoodle
+instead of setting it directly.
+
+so fucking dumb.
+
+fix for this is making it private with no setter.
+
+~~~~~~
+
+No discord till i get the shop done or lunch happens.
+
+Current bug: items aren't even CALLING their version method?
+
+(my goal is for one item to have several forms based on it's average stats).
+
+~~~~~~~
+
+Okay, I've got some sample items created.
+
+FIRST STEP: have an AI item know how to render itself into html (not canvas).
+
+includes a "purchase" or "deploy" button and a list of it's stats. (ignoring zero stat ones).
+
+Render these items unto the stat page.
+
+~~~~~~~~
+
+Alright, now for the HARD part.
+
+I need to get the itemInventory to save itself to JSON, and load as well.
+
+Once I do that I can make the "buy" button work
+and display my inventory on the playpen page (under the playpen itself)
+
+~~~~~~~
+
+Alright, the store is WORKING, except when I reload the page it's not storing how many items I have.
+
+So. Is it a save issue. Or a load issue.
+
+First, check saving:
+
+AHAH i bet i'm just straight up never saving. I need to be saving after each purchase.
+
+alright, now there's an error on load.
+
+~~~~~~
+....................
+................
+.........
+.....
+.
+
+What
+The
+Actual
+Fuck.
+
+Items are saving and loading, 10/10. Except hte player's inventory has MULTIPLE carrots, for example
+but only the first one renders........
+because the ImageElement isn't being copied because omfg.
+
+Wait. that can't be true. The copying is happening on another page.
+
+So what IS happening?
+
+There is no img tag in there. Hrrrm.
+
+wait not it's the last one that has it.
+
+bluh. Why is that?
+
+(also it's a buy button when it should be a deploy button)
+
+oh.
+
+AHAH:
+
+        imageElement = await Loader.getResource(("$folder$chosen"));
+ but what i need to do is make a copy of it. not use the cached one hte loader has.
+
+
+ ~~~~~~
+
+ alright, deployed items aren't attracting as much attention as hoped.
+ I think i need to dial down the boredom rates.
+
+
+ ~~~~~
+
+ Stats are wrong. Giving them even one carrot makes them INSANELY high. why?
+
+ ~~~~~~
+
+ Alright, now grubs are flipping their shit about items and refusing to ever stop from reacting to the. WHY.
+
+well, to make it easier to test i coul dmake it so curious grubs always investigate new items.
+
+~~~~~~~~~~~
+
+Current Sequence of Events:
+
+Fresh Screen.
+Toggle Animations.
+Deploy Carrot.
+Wiggler reacts to carrot.
+Wiggler spends a split second wanting to investigate carrot.
+Wiggler decides carrot is close enough to react to.
+Wiggler no longer has a target.
+
+When wiggler finally does try to go see the carrot, it never thinks it reaches it.
+starts raving.
+
+
+Since I am making wigglers target new items, no more auto react. Turn that off, see if it helps.
+
+.....
+No matter where the carrot spawns. It thinks it's at distance "2";
+What happens if I spawn the carrot in a set location?
+
+
+........
+
+It's rendering half way across the map but thinks it's x is zero.
+
+
+.......
+
+WTH.
+
+Okay.
+
+"place on ground" is called once it renders. until then x is zero. instead, i should make
+x default to something that can  never be accidentally triggered.
+-100013 perhaps?
+
+
+~~~~~~
+
+Alright, let's fucking go.
+
+Today I need to implement currency.  money will be a field on player directly,
+and i want the navbar to both display current currency and a button for collecting daily amounts
+(and a timer counting down to next amount).
+
+anything that updates money doesn't do so directly, wrapped in method that updates navbar.
+
+buying grubs costs money based on stats and caste.
+buying items costs money based on stats.
+graduating a grub gets money based on stats and caste.
+
+
+~~~~~~
+
+Alright. Slow and steady. Focus. I'm running out of time but I'm ALSO running out of features.
+
+I can do this.
+
+I even canceled my IRl friday hangout so I could do this.
+
+First thing I need to do is fix the bug where it lets you buy multiple of an item even if you'd run out of money.
+
+It happens because the button only validates on creation, but after other shit.
+
+disable and change class if at any point the button is clicked but shouldn't be? good enough for now.
+
+
+I can feel a headache coming on. Luckily I'm going to break for dinner soon.
+
+~~~~~~
+
+
+Next up: I need to make it so that if you go to ANY page (besides your data) without any grubs, it redirects
+you to the adopt page.
+
+Then, I need to make a loading/auto play for playpen.
+
+THEN I can take my victory lap and do the fun stuff of making Empresses effect the sim.
+
+~~~~~
+
+First thought:
+
+Just make stop = false and see what htat breaks.
+
+if it breaks NOTHING and just looks bad,
+have it display "Loading" until it loads.
+
+~~~~~~~
+
+Alright, today I'm finally going to tackle pagination. Should be simple enough.
+
+The alumni screen is way too long.
+
+Want a section for "Total Alumni: 347" or whatever.
+Want to be able to pick 6, 12, 24, 48, or 96 alumni per page.
+
+Then, (stretch goal, maybe do after next page) want to be able search for text in the epilogue page
+and display up to that many results at a time.
+
+ALSO want to have a page listing the extended zodiac table, with it greyed out if you don't have it.
+If you click, shows all the alumni matching that sign you have.
+
+Same for diff page with aspect/moon.
+
+I remember I did Pagination for MonGirlTile so.... what was the basic algorithm? probably involves modulo.
+
+		for(int i = (page*cards_on_page); i<((page*cards_on_page) + cards_on_page); i++){
+
+oh that's p simple. Okay.
+
+For now just put this logic in a controller?
+
+~~~~~
+
+Alright, so what do I want for the sign page.
+
+First step is just to display ALL the signs, in the right order.
+
+Second step is to.... Hrrrm. Grey out the ones you don't have?
+
+Third step is to make clicking it take you to the alumni page, but with a modifier to only display
+trolls with that sign.
+
+Then i'm done?
+
+So. How do i get to that first step?
+
+I have all the signs, just uncolored. I....REALLY do not want to make 244 canvases on a screen, even if they are tiny?
+Wait, what am I talking about, that's just what I do for loras.
+Alright, this is easy.
+
+So how big should they be? How big are they on the extended zodiac page of what pumpkins?
+
+Looks like about 50 by 50.
+
+What are signs like right now in my system, like....the objects? Do they know how to render themselves?
+
+        new Sign(Sign.BURGUNDY, Sign.TIME, Sign.DERSE);
+and then they auto get assigned a sign number via:
+
+        imgNum = Sign.signNumber;
+
+So, I assume it will be organized different from the what pumpkin page. it will be all burgundy then all bronze.
+that will probalby be fine for now.
+
+What next?
+
+Well, i got the number, so I can just go into /Homestuck/CanonSymbols and draw it.
+
+How will I know what color to make it? probably something in HomestuckTrollDoll...
+
+
+Hrrrm.... maybe not. Doesn't seem like it has any functions for that.
+
+Alright then, I have a todo:
+
+1: Render the uncolored 244 troll signs in order, each row is a color.
+2: Make the signs the correct color (modify the doll code to have a funciton for this)
+3: See how long it takes to render.
+4: see if i can make each column a color instead
+5: color bgs black or grey based on whether or not i have at least one alumni with that sign
+6: click on canvas to go to alumni view of all trolls of that sign.
+7: click on row/column to go to alumni view of all trolls of that caste.
+8: epilogue search in alumni view
+
+~~~
+
+oh fuck
+i forgot the canon symbols are stored.
+with.
+it positioned for a doll.
+do i really trust the auto crop algorithm to both work, and be 244 fast?
+
+no.
+i have the cards somewhere, right? could work?
+
+
+
+
+yeah, just fucking do that, won't need to recolor anyways. just resize
+
+~~
+Okay how far along am I?
+
+5: color bgs black or grey based on whether or not i have at least one alumni with that sign
+6: click on canvas to go to alumni view of all trolls of that sign.
+7: click on row/column to go to alumni view of all trolls of that caste.
+8: epilogue search in alumni view
+
+
+so next step is being able to say "of all the alumni, how many are sign X".
+and then i need to make alumni controller take in a param to filter by that (get?)
+
+go find that "where" syntax
+
+~~~~~~~~
+
+bug: wiggler eyes keep going to yell......
+huh.
+
+am i saving wigglers before i am asking about mutant eyes?
+
+i'm not, am i.
+
+god damn.
+
+that was a fast fix.
+
+hrrrm. no. i am.
+
+so.
+
+a saved grub might load with wrong eyes anyways?
+time to hack my save data to test this hypothethis
+
+seems to be confirmed.
+
+i recall that i change the eyes to "yellow" when they are old enough? that might be it
+
+
+
+
+

@@ -3,6 +3,8 @@ const electron = require('electron')
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+const Menu = electron.Menu;
+
 
 const path = require('path')
 const url = require('url')
@@ -12,9 +14,21 @@ const url = require('url')
 let mainWindow
 
 function createWindow () {
+const template = [
+  {
+    label: 'JR',
+    submenu: [
+      {role: 'test'},
+      {role: 'test2'},
+    ]
+  }
+  ];
+
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1400, height: 600})
   mainWindow.zoomFactor = (0.05);
+  menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu)
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
